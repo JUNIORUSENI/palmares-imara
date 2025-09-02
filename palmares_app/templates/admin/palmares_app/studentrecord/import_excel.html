@@ -1,0 +1,41 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:palmares_app_studentrecord_changelist' %}">{% trans 'Résultats élèves' %}</a>
+    &rsaquo; {{ title }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="module">
+    <h2>{{ title }}</h2>
+    <div class="form-row">
+        <p>Importez un fichier Excel (.xlsx) avec les colonnes suivantes :</p>
+        <ul>
+            <li><strong>Nom complet</strong> - Nom et prénom de l'élève</li>
+            <li><strong>Pourcentage</strong> - Pourcentage obtenu (nombre décimal)</li>
+            <li><strong>Classe</strong> - Classe de l'élève</li>
+            <li><strong>Section</strong> - Section de l'élève</li>
+            <li><strong>Année scolaire</strong> - Année scolaire (ex: 2023-2024)</li>
+        </ul>
+        <p><em>Note: La première ligne doit contenir les en-têtes des colonnes.</em></p>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-row">
+            <label for="id_excel_file">Fichier Excel:</label>
+            <input type="file" name="excel_file" id="id_excel_file" accept=".xlsx,.xls" required>
+        </div>
+        <div class="submit-row">
+            <input type="submit" value="Importer" class="default">
+            <a href="{% url 'admin:palmares_app_studentrecord_changelist' %}" class="cancel-link">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

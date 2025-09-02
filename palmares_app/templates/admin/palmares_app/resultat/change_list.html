@@ -1,0 +1,16 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+
+{% block object-tools-items %}
+    <li>
+        <a href="{% url 'admin:import_excel' %}" class="addlink">
+            Importer depuis Excel
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'palmares_app:import_logs' %}" class="viewlink">
+            Voir les logs d'importation
+        </a>
+    </li>
+    {{ block.super }}
+{% endblock %}
