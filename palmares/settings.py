@@ -21,13 +21,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-change-me-in-production')
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
+DEBUG = os.getenv('DEBUG')
 
 # ALLOWED_HOSTS - Configuration pour le déploiement
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
 ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS if host.strip()]
 
 
@@ -71,7 +71,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "palmares.wsgi.application"
+WSGI_APPLICATION = "palmares.wsgi.application" 
 
 
 # Database
@@ -81,37 +81,17 @@ import os
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("DB_NAME"),
+        "USER": os.getenv("DB_USER"),
+        "PASSWORD": os.getenv("DB_PASSWORD"),
+        "HOST": os.getenv("DB_HOST"),
+        "PORT": os.getenv("DB_PORT"),
+        "OPTIONS": {
+            "sslmode": os.getenv("DB_SSLMODE"), 
+        },
     }
 }
-
-# Production database configuration (PostgreSQL)
-if os.getenv('DATABASE_URL'):
-    try:
-        import dj_database_url
-        DATABASES['default'] = dj_database_url.config(default=os.getenv('DATABASE_URL'))
-    except ImportError:
-        pass  # Fallback to SQLite if dj-database-url not available
-elif os.getenv('DB_ENGINE') == 'postgresql':
-    try:
-        DATABASES = {
-            "default": {
-                "ENGINE": "django.db.backends.postgresql",
-                "NAME": os.getenv("DB_NAME", "palmares_db"),
-                "USER": os.getenv("DB_USER", "palmares_user"),
-                "PASSWORD": os.getenv("DB_PASSWORD", ""),
-                "HOST": os.getenv("DB_HOST", "localhost"),
-                "PORT": os.getenv("DB_PORT", "5432"),
-                "OPTIONS": {
-                    'sslmode': os.getenv('DB_SSLMODE', 'prefer'),
-                }
-            }
-        }
-    except ImportError:
-        # Fallback to SQLite if psycopg2 not available (e.g., on Windows development)
-        pass
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -154,12 +134,12 @@ LOCALE_PATHS = [
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = os.getenv('STATIC_URL', '/static/')
-STATIC_ROOT = BASE_DIR / os.getenv('STATIC_ROOT', 'staticfiles')
+STATIC_URL = os.getenv('STATIC_URL')
+STATIC_ROOT = BASE_DIR / os.getenv('STATIC_ROOT')
 
 # Media files
-MEDIA_URL = os.getenv('MEDIA_URL', '/media/')
-MEDIA_ROOT = BASE_DIR / os.getenv('MEDIA_ROOT', 'media')
+MEDIA_URL = os.getenv('MEDIA_URL')
+MEDIA_ROOT = BASE_DIR / os.getenv('MEDIA_ROOT')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
