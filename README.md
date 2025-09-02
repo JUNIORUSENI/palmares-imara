@@ -2,6 +2,11 @@
 
 Application web moderne de **gestion de palmarès scolaire** développée avec Django.
 
+## 🌐 Domaine de Production
+**URL :** https://palmares.aedbimarasfs.org/
+
+L'application sera déployée et accessible à cette adresse une fois la configuration terminée.
+
 ## 📋 Vue d'ensemble
 
 L'école dispose de fichiers **Excel** contenant les colonnes suivantes :
@@ -158,16 +163,50 @@ palmares/
 
 ### Variables d'environnement (.env)
 
+**Pour le développement :**
 ```bash
-# Django
-DEBUG=0
-SECRET_KEY=votre-cle-secrete
-ALLOWED_HOSTS=domaine.com
+# Copier le fichier d'exemple
+cp .env.example .env
 
-# Base de données
-DB_NAME=palmares_db
+# Le fichier .env est déjà configuré pour le développement
+# avec DEBUG=True et SQLite
+```
+
+**Pour la production :**
+```bash
+# Créer le fichier de production
+cp .env.example .env.prod
+
+# Éditer avec vos valeurs de production
+nano .env.prod
+```
+
+**Variables importantes :**
+```bash
+# Sécurité
+DEBUG=False                                      # Toujours False en production
+SECRET_KEY=votre-cle-secrete-unique              # Générer une nouvelle clé
+ALLOWED_HOSTS=palmares.aedbimarasfs.org         # Domaine configuré
+
+# Configuration spécifique pour palmares.aedbimarasfs.org
+DB_NAME=palmares_imara_prod
 DB_USER=palmares_user
-DB_PASSWORD=mot-de-passe
+DB_PASSWORD=votre-mot-de-passe-complexe
+```
+
+# Base de données PostgreSQL
+DB_ENGINE=postgresql
+DB_NAME=palmares_imara_db
+DB_USER=palmares_user
+DB_PASSWORD=mot-de-passe-complexe
+DB_HOST=localhost
+DB_PORT=5432
+
+# Fichiers statiques
+STATIC_URL=/static/
+STATIC_ROOT=staticfiles
+MEDIA_URL=/media/
+MEDIA_ROOT=media
 ```
 
 ### Format des fichiers Excel
@@ -483,9 +522,9 @@ echo "0 3 * * * find /var/www/palmares_imara/media/import_errors/ -name '*.csv' 
 
 ### Accès aux interfaces
 
-- **Application principale** : `https://votre-domaine.com`
-- **Interface d'administration** : `https://votre-domaine.com/admin/`
-- **Logs d'importation** : `https://votre-domaine.com/import-logs/`
+- **Application principale** : `https://palmares.aedbimarasfs.org/`
+- **Interface d'administration** : `https://palmares.aedbimarasfs.org/admin/`
+- **Logs d'importation** : `https://palmares.aedbimarasfs.org/import-logs/`
 
 ### Comptes par défaut
 
@@ -693,8 +732,8 @@ docker-compose -f docker-compose.prod.yml logs -f
 sudo journalctl -u nginx -f
 
 # Test de l'application
-curl -k https://votre-domaine.com
-curl -k https://votre-domaine.com/admin/
+curl -k https://palmares.aedbimarasfs.org/
+curl -k https://palmares.aedbimarasfs.org/admin/
 ```
 
 ---

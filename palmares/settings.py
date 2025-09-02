@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +21,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-whr3tgz5ed2#=f)56^qgsh)2g9yt1gxih@&m8^=3160k)@$p49"
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-change-me-in-production')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS - Configuration pour le déploiement
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS if host.strip()]
 
 
 # Application definition
@@ -90,7 +93,7 @@ if os.getenv('DATABASE_URL'):
         DATABASES['default'] = dj_database_url.config(default=os.getenv('DATABASE_URL'))
     except ImportError:
         pass  # Fallback to SQLite if dj-database-url not available
-elif os.getenv('PROD_DB'):
+elif os.getenv('DB_ENGINE') == 'postgresql':
     try:
         DATABASES = {
             "default": {
@@ -100,6 +103,9 @@ elif os.getenv('PROD_DB'):
                 "PASSWORD": os.getenv("DB_PASSWORD", ""),
                 "HOST": os.getenv("DB_HOST", "localhost"),
                 "PORT": os.getenv("DB_PORT", "5432"),
+                "OPTIONS": {
+                    'sslmode': os.getenv('DB_SSLMODE', 'prefer'),
+                }
             }
         }
     except ImportError:
@@ -148,12 +154,12 @@ LOCALE_PATHS = [
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_URL = os.getenv('STATIC_URL', '/static/')
+STATIC_ROOT = BASE_DIR / os.getenv('STATIC_ROOT', 'staticfiles')
 
 # Media files
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = os.getenv('MEDIA_URL', '/media/')
+MEDIA_ROOT = BASE_DIR / os.getenv('MEDIA_ROOT', 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -161,5 +167,5 @@ MEDIA_ROOT = BASE_DIR / "media"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Authentication settings
-LOGIN_URL = '/login/'
-LOGOUT_REDIRECT_URL = '/login/'
+LOGIN_URL = os.getenv('LOGIN_URL', '/login/')
+LOGOUT_REDIRECT_URL = os.getenv('LOGOUT_REDIRECT_URL', '/login/')
