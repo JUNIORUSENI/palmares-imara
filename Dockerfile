@@ -12,6 +12,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         gcc \
         libpq-dev \
+        sudo \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
@@ -21,9 +22,13 @@ RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
 # Copy project
 COPY . .
 
-# Create non-root user
+# Create non-root user and set permissions
 RUN useradd --create-home --shell /bin/bash app \
-    && chown -R app:app /app
+    && chown -R app:app /app \
+    && mkdir -p /app/staticfiles /app/media \
+    && chown -R app:app /app/staticfiles /app/media \
+    && chmod -R 755 /app/staticfiles /app/media
+
 USER app
 
 # Expose port
